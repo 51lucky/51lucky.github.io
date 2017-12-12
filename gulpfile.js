@@ -21,14 +21,16 @@ gulp.task('minify-html', function() {
     }))
     .pipe(gulp.dest('./public'))
 });
-// 压缩 public/js 目录 js
-gulp.task('minify-js', function() {
-    return gulp.src('./public/**/*.js')
-        .pipe(uglify())
-        .pipe(gulp.dest('./public'));
-});
-// 执行 gulp 命令时执行的任务
 gulp.task('default', [
-    'minify-html','minify-css','minify-js'
+   'minify-html','minify-css'
 ]);
-
+// 压缩 public/js 目录 js
+//gulp.task('minify-js', function() {
+//    return gulp.src('./public/**/*.js')
+//        .pipe(uglify())
+//        .pipe(gulp.dest('./public'));
+//});
+// 执行 gulp 命令时执行的任务
+//gulp.task('default', [
+//    'minify-html','minify-css','minify-js'
+//]);
