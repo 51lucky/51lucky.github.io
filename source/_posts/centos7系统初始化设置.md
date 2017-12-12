@@ -14,7 +14,7 @@ date: 2017-04-07 15:51:36
 如果root用户的密码是安装时自动生成无法确认安全，建议修改root密码。
 
 ````shell
-passwd root
+$ passwd root
 ````
 
 系统会提示输入新的密码，需要输入两次相同的新密码。
@@ -28,19 +28,19 @@ passwd root
 在日常的服务器管理过程中，并不需要使用root来登录。创建一个拥有一定权限的普通用户进行日常的操作与维护。
 
 ```shell
-useradd lucky
+$ useradd lucky
 ```
 
 lucky 就是普通用户的名称，根据实际情况取名，随后给该账号设定密码
 
 ```shell
-passwd lucky
+$ passwd lucky
 ```
 
 设置完密码后，需要对lucky用户赋权。
 
 ```shell
-visudo
+$ visudo
 ```
 
 在sudoers的最后一行加入：
@@ -53,8 +53,8 @@ lucky            ALL=(ALL)             ALL
 
 编辑修改SSH配置文件
 
-```shell 
-vi /etc/ssh/sshd_config
+```shell
+$ vi /etc/ssh/sshd_config
 ```
 
 打开配置文件后，查找
@@ -129,14 +129,14 @@ systemctl restart sshd.service
 安装firewalld防火墙。
 
 ```shell
-yum -y install firewalld
+$ yum -y install firewalld
 ```
 
 因为更改过SSH默认端口，所以先修改firewall中SSH服务配置文件
 
 ```shell
-cp /usr/lib/firewalld/services/ssh.xml /etc/firewalld/services/
-vi /etc/firewalld/services/ssh.xml
+$ cp /usr/lib/firewalld/services/ssh.xml /etc/firewalld/services/
+$ vi /etc/firewalld/services/ssh.xml
 ```
 
 查找
@@ -154,20 +154,20 @@ vi /etc/firewalld/services/ssh.xml
 启动firewalld并设为开机自启
 
 ```shell
-systemctl start firewalld.service
-systemctl enable firewalld.service
+$ systemctl start firewalld.service
+$ systemctl enable firewalld.service
 ```
 
 在firewalld中开放ssh服务端口
 
 ```shell
-firewall-cmd --permanent --add-service=ssh
+$ firewall-cmd --permanent --add-service=ssh
 ```
 
 重启防火墙
 
 ```shell
-firewall-cmd --reload
+$ firewall-cmd --reload
 ```
 
 为防止失误，保持当前窗口连接，新建SSH连接2345端口测试lucky能否登录系统。更多常用命令查看[firewall常用命令](posts/a5e18cd0/)
@@ -177,21 +177,21 @@ firewall-cmd --reload
 安装EPEL源
 
 ```shell
-yum -y install epel-release.noarch
+$ yum -y install epel-release.noarch
 ```
 
 手动进行系统更新，安装所需要软件cron和yum-cron
 
 ```shell
-yum -y update
-yum -y install cronie
-yum -y install yum-cron
+$ yum -y update
+$ yum -y install cronie
+$ yum -y install yum-cron
 ```
 
 修改yum-cron配置文件
 
 ```shell
-vi /etc/yum/yum-cron.conf
+$ vi /etc/yum/yum-cron.conf
 ```
 
 查找
@@ -217,10 +217,10 @@ apply_updates = yes
 修改完成，保存配置文件退出编辑器。启动cron和yum-cron并设为开机自启
 
 ```shell
-systemctl start crond.service
-systemctl enable crond.service
-systemctl start yum-cron.service
-systemctl enable yum-cron.service
+$ systemctl start crond.service
+$ systemctl enable crond.service
+$ systemctl start yum-cron.service
+$ systemctl enable yum-cron.service
 ```
 
 ## 修改时区
@@ -228,6 +228,5 @@ systemctl enable yum-cron.service
 各个时区设置文件放在/usr/share/zoneinfo/中，将/etc/localtime通过文件链接指向欲设置的时区配置文件即可。
 
 ```shell
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+$ ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ```
-
