@@ -11,5 +11,5 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: https://51lucky.xyz/sitemap.xml
-Sitemap: https://51lucky.xyz/baidusitemap.xml
+Sitemap: http://51lucky.xyz/sitemap.xml
+Sitemap: http://51lucky.xyz/baidusitemap.xml
