@@ -1,46 +1,47 @@
-language: node_js  #ÉèÖÃÓïÑÔ
+language: node_js  #è®¾ç½®è¯­è¨€
 
-node_js: stable  #ÉèÖÃÏàÓ¦µÄ°æ±¾
+node_js: stable  #è®¾ç½®ç›¸åº”çš„ç‰ˆæœ¬
 
 install:
-  #- npm install  #°²×°hexo¼°²å¼ş
+  #- npm install  #å®‰è£…hexoåŠæ’ä»¶
   - yarn
 
 script:
-  - hexo cl  #Çå³ı
-  - hexo g  #Éú³É
+  - rm db.json
+  - hexo cl  #æ¸…é™¤
+  - hexo g  #ç”Ÿæˆ
 
 
-cache: #»º´æ£¬¿ÉÒÔ½ÚÊ¡¼¯³ÉµÄÊ±¼ä£¬ÕâÀïÎÒÓÃÁËyarn£¬Èç¹û²»ÓÃ¿ÉÒÔÉ¾³ı
+cache: #ç¼“å­˜ï¼Œå¯ä»¥èŠ‚çœé›†æˆçš„æ—¶é—´ï¼Œè¿™é‡Œæˆ‘ç”¨äº†yarnï¼Œå¦‚æœä¸ç”¨å¯ä»¥åˆ é™¤
   apt: true
   yarn: true
   directories:
     - node_modules
-  
+
 after_script:
   - cd ./public
   - git init
-  
+
   - git add .
   - git commit -m "update"
-  - git push --force --quiet "https://${blog}@${GH_REF}" master:master  #GH_TOKENÊÇÔÚTravisÖĞÅäÖÃtokenµÄÃû³Æ
+  - git push --force --quiet "https://${blog}@${GH_REF}" master:master  #GH_TOKENæ˜¯åœ¨Travisä¸­é…ç½®tokençš„åç§°
 
 git:
   submodules: false
 
 before_install:
-    - git config user.name "olsonaolson"  #ĞŞ¸Äname
-    - git config user.email "olsonaolson@gmail.com"  #ĞŞ¸Äemail
+    - git config user.name "olsonaolson"  #ä¿®æ”¹name
+    - git config user.email "olsonaolson@gmail.com"  #ä¿®æ”¹email
     - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
     - git submodule update --init --recursive
-    # ÓÉÓÚÊ¹ÓÃÁËyarn£¬ËùÒÔĞèÒªÏÂÔØ£¬Èç²»ÓÃyarnÕâÁ½ĞĞ¿ÉÒÔÉ¾³ı
+    # ç”±äºä½¿ç”¨äº†yarnï¼Œæ‰€ä»¥éœ€è¦ä¸‹è½½ï¼Œå¦‚ä¸ç”¨yarnè¿™ä¸¤è¡Œå¯ä»¥åˆ é™¤
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - export PATH=$HOME/.yarn/bin:$PATH
     - npm install -g hexo-cli
-    
+
 branches:
   only:
-    - source  #Ö»¼à²âhexo·ÖÖ§£¬hexoÊÇÎÒµÄ·ÖÖ§µÄÃû³Æ£¬¿É¸ù¾İ×Ô¼ºÇé¿öÉèÖÃ
+    - source  #åªç›‘æµ‹hexoåˆ†æ”¯ï¼Œhexoæ˜¯æˆ‘çš„åˆ†æ”¯çš„åç§°ï¼Œå¯æ ¹æ®è‡ªå·±æƒ…å†µè®¾ç½®
 env:
  global:
-   - GH_REF: github.com/51lucky/51lucky.github.io.git  #ÉèÖÃGH_REF£¬×¢Òâ¸ü¸Äyourname
+   - GH_REF: github.com/51lucky/51lucky.github.io.git  #è®¾ç½®GH_REFï¼Œæ³¨æ„æ›´æ”¹yourname
