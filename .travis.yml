@@ -7,7 +7,6 @@ install:
   - yarn
 
 script:
-  - rm db.json
   - hexo cl  #清除
   - hexo g  #生成
 
