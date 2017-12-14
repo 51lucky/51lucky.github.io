@@ -8,7 +8,7 @@ install:
 
 script:
   - hexo cl  #清除
-  - hexo g  #生成
+  - hexo g && gulp  #生成
 
 
 cache: #缓存，可以节省集成的时间，这里我用了yarn，如果不用可以删除
