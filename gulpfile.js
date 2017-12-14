@@ -1,4 +1,4 @@
-ar gulp = require('gulp');
+var gulp = require('gulp');
 var minifycss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
