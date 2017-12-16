@@ -15,7 +15,8 @@ after_script:
 - git init
 - git add .
 - git commit -m "update"
-- git push --force --quiet "git@github.com:51lucky/51lucky.github.io.git" master:master
+- git remote add orign git@github.com:51lucky/51lucky.github.io.git
+- git push origin master:master --force --quiet
 git:
   submodules: false
 before_install:
@@ -31,7 +32,6 @@ before_install:
 branches:
   only:
   - source
-  
 addons:
   ssh_known_hosts:
   - 172.247.39.3:18866
