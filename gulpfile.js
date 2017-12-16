@@ -45,8 +45,8 @@ gulp.task('images', function() {
         .pipe(gulp.dest('./public/uploads/'));
 });
 // 压缩 public 目录 html文件 public/**/*.hmtl 表示public下所有文件夹中html，包括当前目录
-    gulp.task('minify-html', function() {
-      return gulp.src('./public/**/*.html')
+gulp.task('minify-html', function() {
+    return gulp.src('./public/**/*.html')
         .pipe(htmlclean())
         .pipe(htmlmin({
              removeComments: true,
@@ -54,6 +54,6 @@ gulp.task('images', function() {
              minifyCSS: true,
              minifyURLs: true,
         }))
-        .pipe(gulp.dest('./public'))
-    });
+        .pipe(gulp.dest('./public'));
+});
 gulp.task('default', ['uglify', 'jsall', 'cssmin', 'images', 'fancybox:js', 'fancybox:css','minify-html']);
