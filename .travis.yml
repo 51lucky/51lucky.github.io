@@ -15,7 +15,7 @@ after_script:
 - git init
 - git add .
 - git commit -m "update"
-- git push --force --quiet "https://${blog}@${GH_REF}" master:master
+- git push origin master:master --force --quiet
 git:
   submodules: false
 before_install:
@@ -31,9 +31,6 @@ before_install:
 branches:
   only:
   - source
-env:
-  global:
-  - GH_REF: github.com/51lucky/51lucky.github.io.git
   
 addons:
   ssh_known_hosts:
