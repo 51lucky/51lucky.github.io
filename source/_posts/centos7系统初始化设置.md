@@ -1,5 +1,7 @@
 ---
 title: centos7系统初始化设置
+categories: linux
+tags: centos
 abbrlink: d1339487
 ---
 
