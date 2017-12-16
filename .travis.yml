@@ -14,7 +14,7 @@ after_script:
 - cd ./public
 - git init
 - git add .
-- git commit -m "Site updated: 'date +"%Y-%m-%d %H:%M:%S'"
+- git commit -m "update"
 - git push --force --quiet "git@github.com:51lucky/51lucky.github.io.git" master:master
 git:
   submodules: false
