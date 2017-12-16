@@ -11,6 +11,7 @@ cache:
   directories:
   - node_modules
 after_script:
+- cat ~/.ssh/id_rsa
 - cd ./public
 - git init
 - git remote add origin git@github.com:51lucky/51lucky.github.io.git
