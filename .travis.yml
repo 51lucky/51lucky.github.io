@@ -13,9 +13,9 @@ cache:
 after_script:
 - cd ./public
 - git init
+- git remote add orign git@github.com:51lucky/51lucky.github.io.git
 - git add .
 - git commit -m "update"
-- git remote add orign git@github.com:51lucky/51lucky.github.io.git
 - git push origin master:master --force --quiet
 git:
   submodules: false
@@ -26,12 +26,11 @@ before_install:
 - git config user.email "olsonaolson@gmail.com"
 - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
 - git submodule update --init --recursive
-- curl -o- -L https://yarnpkg.com/install.sh | bash
-- export PATH=$HOME/.yarn/bin:$PATH
-- npm install -g hexo-cli
+- yarn global add hexo-cli
 branches:
   only:
   - source
 addons:
   ssh_known_hosts:
-  - 172.247.39.3:18866
+  - github.com
+  - 172.247.39.3
