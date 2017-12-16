@@ -38,11 +38,11 @@ gulp.task('cssmin', function() {
 });
 //图片压缩
 gulp.task('images', function() {
-    gulp.src('./public/images/*.*')
+    gulp.src('./public/uploads/*.*')
         .pipe(imagemin({
             progressive: false
         }))
-        .pipe(gulp.dest('./public/images/'));
+        .pipe(gulp.dest('./public/uploads/'));
 });
 // 压缩 public 目录 html文件 public/**/*.hmtl 表示public下所有文件夹中html，包括当前目录
     gulp.task('minify-html', function() {
@@ -56,4 +56,4 @@ gulp.task('images', function() {
         }))
         .pipe(gulp.dest('./public'))
     });
-gulp.task('build', ['uglify', 'jsall', 'cssmin', 'images', 'fancybox:js', 'fancybox:css','minify-html']);
+gulp.task('default', ['uglify', 'jsall', 'cssmin', 'images', 'fancybox:js', 'fancybox:css','minify-html']);
