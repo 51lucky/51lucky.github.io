@@ -19,6 +19,8 @@ after_script:
 git:
   submodules: false
 before_install:
+- openssl aes-256-cbc -K $encrypted_51a4b960a013_key -iv $encrypted_51a4b960a013_iv -in .travis/travis.key.enc -out ~/.ssh/id_rsa -d
+- chmod 600 ~/.ssh/id_rsa
 - git config user.name "olsonaolson"
 - git config user.email "olsonaolson@gmail.com"
 - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
@@ -32,10 +34,7 @@ branches:
 env:
   global:
   - GH_REF: github.com/51lucky/51lucky.github.io.git
-dd:
-- openssl aes-256-cbc -K $encrypted_51a4b960a013_key -iv $encrypted_51a4b960a013_iv
-  -in travis/travis.key.enc -out travis.key -d
+  
 addons:
   ssh_known_hosts:
-  - github.com
-  - 172.247.39.3
+  - 172.247.39.3:18866
