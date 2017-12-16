@@ -13,7 +13,7 @@ cache:
 after_script:
 - cd ./public
 - git init
-- git remote add orign git@github.com:51lucky/51lucky.github.io.git
+- git remote add origin git@github.com:51lucky/51lucky.github.io.git
 - git add .
 - git commit -m "update"
 - git push origin master:master --force --quiet

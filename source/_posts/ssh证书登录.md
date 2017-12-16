@@ -3,7 +3,6 @@ title: ssh证书登录
 categories: linux
 tags: centos
 toc: true
-abbrlink: cecc8cb2
 date: 2017-04-08 12:38:29
 ---
 
