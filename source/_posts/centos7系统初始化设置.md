@@ -1,7 +1,10 @@
 ---
 title: centos7系统初始化设置
+categories: linux
 tags: centos
+toc: true
 abbrlink: d1339487
+date: 2017-04-07 15:51:36
 ---
 
 安装好Centos系统后，我们还需要在服务器上做一些简单的操作，以进一步增强服务器的安全性。
