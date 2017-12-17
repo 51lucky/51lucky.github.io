@@ -35,5 +35,5 @@ branches:
 addons:
   ssh_known_hosts:
   - github.com
-  - 45.61.156.94
+  - 45.61.156.94:18866
 
