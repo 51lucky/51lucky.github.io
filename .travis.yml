@@ -4,7 +4,7 @@ install:
 - yarn
 script:
 - hexo cl
-- hexo g && gulp
+- hexo g
 cache:
   apt: true
   yarn: true
