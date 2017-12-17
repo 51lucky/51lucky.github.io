@@ -7,7 +7,7 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat');
 //JS压缩
 gulp.task('uglify', function() {
-    return gulp.src(['./public/js/**/.js','!./public/js/**/*min.js'])//只是排除min.js文件还是不严谨，一般不会有问题，根据自己博客的修改我的修改为return gulp.src(['./public/**/*.js','!./public/zuoxi/**/*.js',,'!./public/radio/**/*.js'])
+    return gulp.src(['./public/js/**/.js','!./public/js/**/*min.js','!./lib/*/*min.js'])//只是排除min.js文件还是不严谨，一般不会有问题，根据自己博客的修改我的修改为return gulp.src(['./public/**/*.js','!./public/zuoxi/**/*.js',,'!./public/radio/**/*.js'])
         .pipe(uglify())
         .pipe(gulp.dest('./public/js'));//对应修改为./public即可
 });

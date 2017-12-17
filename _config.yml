@@ -12,7 +12,7 @@ timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://51lucky.xyz
+url: https://51lucky.xyz
 root: /
 permalink: posts/:abbrlink/
 permalink_defaults:
@@ -100,6 +100,7 @@ baidusitemap:
 nofollow:
   enable: true
   exclude: # 例外的链接，可将友情链接放置此处
+    - https://51lucky.xyz
     #- exclude1.com
     #- exclude2.com
 
