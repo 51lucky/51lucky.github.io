@@ -30,37 +30,116 @@ yum -y install nginx
 ```shell
 vi /etc/nginx/nginx.conf
 ```
+```shell
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
 
-查找worker_processes修改为VPS的CPU核心数
-
-```
+user nginx;
 worker_processes 1;
-```
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
 
-查找gzip取消注释修改为
+# Load dynamic modules. See /usr/share/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
 
-```shell
-gizp on；
-```
+events {
+    worker_connections 1024;
+    accept_mutex on;
+    multi_accept on;
+    use epoll;
+}
 
-在**http{}**段添加全局参数**server_tokens**(用户隐藏nginx版本号)
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
 
-```shell
-server_tokens off;
-```
+    access_log  /var/log/nginx/access.log  main;
 
-编辑默认站点配置文件：
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+    server_tokens       off;
 
-```shell
-vi /etc/nginx/conf.d/default.conf
-```
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
 
-把server{}段注释，再添加以下内容（用于屏蔽80端口空主机头访问）
+    # gzip压缩功能设置
+    gzip on;
+    gzip_min_length 1k;
+    gzip_buffers    4 16k;
+    gzip_http_version 1.1;
+    gzip_comp_level 6;
+    gzip_types text/html text/plain text/css text/javascript application/json application/javascript application/x-javascript application/xml;
+    gzip_vary on;
 
-```
-server {
-  listen 80 default;
-  return 500;
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    #屏蔽空机头
+    server {
+        listen        80 default_server;
+        listen        [::]:80 default_server;
+        server_name   _;
+        return        500;
+    }
+
+#    server {
+#        listen       80 default_server;
+#        listen       [::]:80 default_server;
+#        server_name  _;
+#        root         /usr/share/nginx/html;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        location / {
+#        }
+#
+#        error_page 404 /404.html;
+#            location = /40x.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#            location = /50x.html {
+#        }
+#    }
+#
+# Settings for a TLS enabled server.
+#
+#    server {
+#        listen       443 ssl http2 default_server;
+#        listen       [::]:443 ssl http2 default_server;
+#        server_name  _;
+#        root         /usr/share/nginx/html;
+#
+#        ssl_certificate "/etc/pki/nginx/server.crt";
+#        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+#        ssl_session_cache shared:SSL:1m;
+#        ssl_session_timeout  10m;
+#        ssl_ciphers HIGH:!aNULL:!MD5;
+#        ssl_prefer_server_ciphers on;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        location / {
+#        }
+#
+#        error_page 404 /404.html;
+#            location = /40x.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#            location = /50x.html {
+#        }
+#    }
+
 }
 ```
 
@@ -90,7 +169,7 @@ mkdir -p /data/www/log
 添加站点的nginx配置文件
 
 ```shell
-vi /etc/nginx/conf.d/51lucky.conf
+vi /etc/nginx/conf.d/yourdomain.conf
 ```
 
 输入以下内容
@@ -98,14 +177,14 @@ vi /etc/nginx/conf.d/51lucky.conf
 ```shell
 server {
   listen 80;
-  server_name www.51lucky.me;
+  server_name www.yourdomain.com;
   access_log /data/www/log/access.log;
   error_log /data/www/log/error.log;
   root /data/www/web;
-  index index.php index.html index.htm;
+  index index.html index.htm;
 }
 server {
-   server_name 51lucky.me;
+   server_name yourdomain.com;
    rewrite ^/(.*)$ http://www.$host/$1 permanent;
 }
 ```
@@ -134,11 +213,6 @@ nginx主配置文件：/etc/nginx/nginx.conf
 nginx默认配置文件目录：/etc/nginx/conf.d/
 nginx默认站点主目录：/usr/share/nginx/html/
 nginx默认日志目录：/var/log/nginx/
-
-## 开启Https
-
-为网站添加小绿锁，具体方法请查看[开启Https](/posts/3add964c/)
-
 
 ## Git Hook自动部署
 
@@ -205,9 +279,8 @@ $ sudo chown -R git:git blog.git
 ```
 deploy:
   type: git
-  repo: git@51lucky.me:/var/repo/blog.git
+  repo: git@yourdomain.com:/var/repo/blog.git
   branch: master
 ```
 
-要注意切换成你自己的服务器地址，以及服务器端 git 仓库的目录。如果你的ssh端口不是默认的22端口，则**repo**修改为ssh://git@51lucky.me:端口号/var/repo/blog.git，至此，我们的 hexo 自动部署已经全部配置好了。
-
+要注意切换成你自己的服务器地址，以及服务器端 git 仓库的目录。如果你的ssh端口不是默认的22端口，则**repo**修改为ssh://git@yourdomain.com:端口号/var/repo/blog.git，至此，我们的 hexo 自动部署已经全部配置好了。

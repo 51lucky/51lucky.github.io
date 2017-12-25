@@ -8,7 +8,7 @@ categories: 工具
 tags: git
 ---
 
-## 安装git
+## 安装git（root权限）
 
 ```shell
 yum install -y git
@@ -28,20 +28,20 @@ sudo passwd git
 
 将自己电脑的公钥`～/.ssh/id_rsa.pub`中的内容添加到服务器`/home/git/.ssh/authorized_keys`文件中，添加公钥之后可以防止每次 push 都输入密码。
 
-```
+```shell
 chown -R 700  ~/.ssh
-chown -R 600  ~/.ssh/authorized_keys
+chown -R 644  ~/.ssh/authorized_keys
 chown -R git:git /home/git
 ```
-## 修改SSH配置文件，支持使用证书登录（root权限）
+## 修改SSH配置文件，支持使用证书登录
 
-```
+```shell
 vi /etc/ssh/sshd_config
 ```
 
 查找**RSAAuthentication**、**PubkeyAuthentication**、**AuthorizedKeysFile**把所在行修改为：
 
-```
+```shell
 RSAAuthentication yes
 
 PubkeyAuthentication yes
@@ -51,7 +51,7 @@ AuthorizedKeysFile .ssh/authorized_keys
 
 重启SSH服务
 
-```
+```shell
 systemctl restart sshd.service
 ```
 
@@ -59,13 +59,13 @@ systemctl restart sshd.service
 
 出于安全考虑，我们要让 `git` 用户不能通过 shell 登录。可以编辑 `/etc/passwd` 来实现，在 `/etc/passwd`中找到类似下面的一行：
 
-```
+```shell
 git:x:1001:1001:,,,:/home/git:/bin/bash
 ```
 
 将其改为：
 
-```
+```shell
 git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
 ```
 
@@ -82,21 +82,21 @@ ssh -T git@service_ip
 如果更改过ssh的默认端口则命令如下
 
 ```shell
-ssh -T -p 8989 git@service_ip
+ssh -T -p xxxx git@service_ip
 ```
 
 ## 初始化git仓库
 
 选定一个目录作为Git仓库,我是将其放在 `/var/repo/` 目录下。在`/var/repo/`目录下执行下面命令建立一个裸仓库
 
-```
-$ sudo git init --bare sample.git
+```shell
+sudo git init --bare sample.git
 ```
 
 更改仓库sample.git的目录拥有者为git用户
 
-```
-$ sudo chown -R git:git sample.git
+```shell
+sudo chown -R git:git sample.git
 ```
 
 ## 克隆git仓库
@@ -126,7 +126,7 @@ git clone ssh://git@server_ip:port/var/repo/sample.git
 - 如果使用SSH登录进入，显示结果为：Run 'help' for help, or 'exit' to leave. Available commands:list
   解决方法如下：[参考文档](https://git-scm.com/docs/git-shell)
 
-  ````shell 
+  ````shell
   vi /home/git/git-shell-commands/no-interactive-login
   ````
 

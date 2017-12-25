@@ -25,7 +25,7 @@ ssh-keygen -t rsa
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ```
 
-## 设置正确的文件和文件夹权限
+## 设置正确的文件和文件夹权限（root权限）
 
 ```shell
 chown -R 700  ~/.ssh
