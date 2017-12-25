@@ -5,7 +5,7 @@ abbrlink: 423abe9e
 date: 2017-04-22 14:29:15
 tags: git
 ---
-## 一、新建代码库
+## 新建代码库
 
 ```shell
 # 在当前目录下新建一个Git代码库
@@ -20,8 +20,9 @@ $ git clone [url] [project-name]
 # 将本地仓库，关联到远程仓库
 $ git remote add origin [url]
 ```
+<!-- more -->
 
-## 二、配置
+## 配置
 
 Git的设置文件为.gitconfig，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）
 
@@ -40,7 +41,7 @@ $ git config --global user.email "[email-address]"
 $ git config --global color.ui true
 ```
 
-## 三、增加/删除文件
+## 增加/删除文件
 
 ```shell
 # 添加指定文件到暂存区
@@ -63,7 +64,7 @@ $ git rm --cached [file]
 $ git mv [file-original] [file-renamed]
 ```
 
-## 四、代码提交
+## 代码提交
 
 ```shell
 # 提交暂存区到仓库区
@@ -82,7 +83,7 @@ $ git commit --amend -m "[message]"
 $ git commit --amend [file1] [file2] ... -m "[message]"
 ```
 
-## 五、分支
+## 分支
 
 ```shell
 # 列出所有本地分支
@@ -133,7 +134,7 @@ $ git push origin :feature_x
 $ git remote prune origin
 ```
 
-## 六、标签
+## 标签
 
 ```shell
 # 列出所有tag
@@ -167,7 +168,7 @@ $ git push origin --tags
 $ git checkout -b [branch-name] [tag]
 ```
 
-## 七、查看信息
+## 查看信息
 
 ```shell
 # 显示有变更的文件
@@ -201,7 +202,7 @@ $ git diff --cached [commit-id]
 # 显示工作区与当前分支最新commit之间的差异
 $ git diff HEAD
 ```
-## 八、远程同步
+## 远程同步
 
 ```shell
 # 下载远程仓库的所有变动
@@ -217,7 +218,7 @@ $ git push origin feature-x:feature-x
 $ git push [remote] --all
 ```
 
-## 九、撤销
+## 撤销
 
 ```shell
 # 用暂存区的指定文件覆盖工作区的该文件
@@ -249,7 +250,7 @@ $ git reset --hard [commit-id]
 $ git reset HEAD~5
 
 ```
-## 十、其它
+## 其它
 
 ```shell
 # 查看git历史命令记录
