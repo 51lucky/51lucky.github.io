@@ -1,9 +1,7 @@
 ---
 title: git常用命令
-categories: 工具
 abbrlink: 423abe9e
 date: 2017-04-22 14:29:15
-tags: git
 ---
 ## 新建代码库
 
