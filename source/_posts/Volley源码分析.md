@@ -55,8 +55,6 @@ Volley的调用比较简单，通过newRequestQueue(...)函数新建并启动一
 
 ## 详细设计
 
-### 类关系图
-
 ### 核心类功能介绍
 
 #### Volley.java
@@ -174,3 +172,21 @@ start()方法中，开启一个**缓存调度线程`CacheDispatcher`** 和4个 *
 * 处理流程图
 
 ![CacheDispatcher流程图](/images/volley/cache_dispatcher.png)
+
+#### NetworkDispatcher.java
+
+一个线程，用于调度处理走网络的请求。启动后会不断从网络请求队列中请求处理，队列为空则等待，请求处理结束则将结果传递给`RespondeDelivery`去执行后续处理。并判断结果是否要进行缓存。
+
+* 主要成员变量
+
+`BlockingQueue<Request<?>> mQueue` 网络请求队列
+
+`Network mNetwork` 网络类，代表了一个可以执行请求的网络
+
+`Cache mCache` 缓存类，代表了一个可以获取请求结果，存储请求结果的缓存
+
+`ResponseDelivery mDelivery` 请求结果传递类，可以传递请求的结果或者错误到调用者
+
+* 处理流程
+
+![NetworkDispatcher流程图](/images/volley/NetworkDispatcher-run-flow-chart.png)
