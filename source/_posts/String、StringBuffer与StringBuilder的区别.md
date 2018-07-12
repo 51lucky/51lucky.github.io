@@ -246,11 +246,11 @@ public class StringDemo {
 　
 测试结果
 
-> 操作java.lang.String类型使用的时间为：10645毫秒</br>
-操作java.lang.StringBuffer类型使用的时间为：4毫秒</br>
-操作java.lang.StringBuilder类型使用的时间为：3毫秒</br>
-字符串直接相加操作：1毫秒</br>
-字符串间接相加操作：9毫秒</br>
+> 操作java.lang.String类型使用的时间为：10645毫秒
+操作java.lang.StringBuffer类型使用的时间为：4毫秒
+操作java.lang.StringBuilder类型使用的时间为：3毫秒
+字符串直接相加操作：1毫秒
+字符串间接相加操作：9毫秒
 
 由上面的执行结果可以看出：
 1. 对于直接相加字符串，效率很高，因为在编译器便确定了它的值，也就是说形如"I"+"love"+"java"; 的字符串相加，在编译期间便被优化成了"Ilovejava"。这个可以用javap -c命令反编译生成的class文件进行验证。
@@ -272,10 +272,9 @@ public class StringDemo {
 
 1. 下面这段代码的输出结果是什么？
 
-　　String a = "hello2"; 　　String b = "hello" + 2; 　　System.out.println((a == b));
+  String a = "hello2"; 　　String b = "hello" + 2; 　　System.out.println((a == b));
 
-　　输出结果为:true。原因很简单，"hello"+2在编译期间就已经被优化成"hello2"，因此在运行期间，变量a和变量b指向的是同一个对象。
-
+  输出结果为:true。原因很简单，"hello"+2在编译期间就已经被优化成"hello2"，因此在运行期间，变量a和变量b指向的是同一个对象。
 2. 下面这段代码的输出结果是什么？
 
   String a = "hello2"; 　　String b = "hello"; 　　String c = b + 2 　　System.out.println((a == b));
@@ -289,43 +288,48 @@ public class StringDemo {
   输出结果为：true。对于被final修饰的变量，会在class文件常量池中保存一个副本，也就是说不会通过连接而进行访问，对final变量的访问在编译期间都会直接被替代为真实的值。那么String c = b + 2;在编译期间就会被优化成：String c = "hello" + 2;
 
 4. 下面这段代码输出结果为：
-```java
-public class StringDemo {
-    public static void main(String[] args) {
-        String a = "hello2";
-        final String b = getHello();
-        String c = b + 2;
-        System.out.println((a == c));
-    }
 
-    public static String getHello() {
-        return "hello";
-    }
-}
-```
-输出结果为false。这里面虽然将b用final修饰了，但是由于其赋值是通过方法调用返回的，那么它的值只能在运行期间确定，因此a和c指向的不是同一个对象。
+  ```java
+  public class StringDemo {
+      public static void main(String[] args) {
+          String a = "hello2";
+          final String b = getHello();
+          String c = b + 2;
+          System.out.println((a == c));
+      }
+
+      public static String getHello() {
+          return "hello";
+      }
+  }
+  ```
+
+  输出结果为false。这里面虽然将b用final修饰了，但是由于其赋值是通过方法调用返回的，那么它的值只能在运行期间确定，因此a和c指向的不是同一个对象。
 
 5. 下面这段代码的输出结果是什么？
-```java
-public class StringDemo {
-    public static void main(String[] args) {
-        String a = "hello";
-        String b =  new String("hello");
-        String c =  new String("hello");
-        String d = b.intern();
 
-        System.out.println(a==b);
-        System.out.println(b==c);
-        System.out.println(b==d);
-        System.out.println(a==d);
-    }
-}
-```
-输出结果为
->false </br>
-false </br>
-false </br>
-true  </br>
+  ```java
+  public class StringDemo {
+      public static void main(String[] args) {
+          String a = "hello";
+          String b =  new String("hello");
+          String c =  new String("hello");
+          String d = b.intern();
+
+          System.out.println(a==b);
+          System.out.println(b==c);
+          System.out.println(b==d);
+          System.out.println(a==d);
+      }
+  }
+  ```
+
+  输出结果为
+
+  >false
+  false
+  false
+  true  
 
   这里面涉及到的是String.intern方法的使用。在String类中，intern方法是一个本地方法，intern方法会在运行时常量池中查找是否存在内容相同的字符串，如果存在则返回指向该字符串的引用，如果不存在，则会将该字符串入池，并返回一个指向该字符串的引用。因此，a和d指向的是同一个对象。
 
@@ -334,22 +338,22 @@ true  </br>
   首先必须弄清楚创建对象的含义，创建是什么时候创建的？这段代码在运行期间会创建2个对象么？毫无疑问不可能，用javap -c反编译即可得到JVM执行的字节码内容：
 
   ```java
-  public class com.kotlin.StringDemo {
-  public com.kotlin.StringDemo();
-    Code:
-       0: aload_0
-       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
-       4: return
+    public class com.kotlin.StringDemo {
+    public com.kotlin.StringDemo();
+      Code:
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
 
-  public static void main(java.lang.String[]);
-    Code:
-       0: new           #2                  // class java/lang/String
-       3: dup
-       4: ldc           #3                  // String abc
-       6: invokespecial #4                  // Method java/lang/String."<init>":(Ljava/lang/String;)V
-       9: astore_1
-      10: return
-  }
+    public static void main(java.lang.String[]);
+      Code:
+         0: new           #2                  // class java/lang/String
+         3: dup
+         4: ldc           #3                  // String abc
+         6: invokespecial #4                  // Method java/lang/String."<init>":(Ljava/lang/String;)V
+         9: astore_1
+        10: return
+    }
   ```
   很显然，new只调用了一次，也就是说只创建了一个对象。
 
