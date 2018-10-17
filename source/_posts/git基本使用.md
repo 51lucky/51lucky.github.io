@@ -2,7 +2,6 @@
 title: git基本使用
 abbrlink: a531cc26
 date: 2018-10-10 21:20:10
-tags: git
 ---
 
 ##  git的操作流程
