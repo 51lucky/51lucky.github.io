@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.proxy.ustclug.org/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Volley 简介Volley是Google推出的Android异步网络请求框架和图片加载框架。在Google I/O 2013大会上发布。 Volley的特点:  支持多个并发网络请求。 支持请求优先级。 支持网络请求缓存。 支持取消网络请求（单个or一组）。 容易自定义/扩展。  所以，Volley特别适合数据量小，通信频繁的网络应用开发,由于Volley会将Response解析到内存中，所以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Volley源码分析">
+<meta property="og:url" content="https://51lucky.xyz/posts/584afc42/index.html">
+<meta property="og:site_name" content="51Lucky">
+<meta property="og:description" content="Volley 简介Volley是Google推出的Android异步网络请求框架和图片加载框架。在Google I/O 2013大会上发布。 Volley的特点:  支持多个并发网络请求。 支持请求优先级。 支持网络请求缓存。 支持取消网络请求（单个or一组）。 容易自定义/扩展。  所以，Volley特别适合数据量小，通信频繁的网络应用开发,由于Volley会将Response解析到内存中，所以">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/design.png">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/Volley-run-flow-chart.png">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/volley-class.png">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/request_queue.png">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/cache_dispatcher.png">
+<meta property="og:image" content="https://51lucky.xyz/images/volley/NetworkDispatcher-run-flow-chart.png">
+<meta property="og:updated_time" content="2018-12-24T09:54:58.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Volley源码分析">
+<meta name="twitter:description" content="Volley 简介Volley是Google推出的Android异步网络请求框架和图片加载框架。在Google I/O 2013大会上发布。 Volley的特点:  支持多个并发网络请求。 支持请求优先级。 支持网络请求缓存。 支持取消网络请求（单个or一组）。 容易自定义/扩展。  所以，Volley特别适合数据量小，通信频繁的网络应用开发,由于Volley会将Response解析到内存中，所以">
+<meta name="twitter:image" content="https://51lucky.xyz/images/volley/design.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://51lucky.xyz/posts/584afc42/">
+
+
+
+
+
+  <title>Volley源码分析 | 51Lucky</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">51Lucky</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">淡定的人生不寂寞</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-guestbook">
+          <a href="/guestbook/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br>
+            
+            留言
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://51lucky.xyz/posts/584afc42/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="51lucky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="51Lucky">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Volley源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-15T06:56:22+00:00">
+                2018-05-15
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-12-24T09:54:58+00:00">
+                2018-12-24
+              </time>
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/posts/584afc42/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="posts/584afc42/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,063
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </span></div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Volley-简介"><a href="#Volley-简介" class="headerlink" title="Volley 简介"></a>Volley 简介</h2><p>Volley是Google推出的Android异步网络请求框架和图片加载框架。在Google I/O 2013大会上发布。</p>
+<p>Volley的特点:</p>
+<ol>
+<li>支持多个并发网络请求。</li>
+<li>支持请求优先级。</li>
+<li>支持网络请求缓存。</li>
+<li>支持取消网络请求（单个or一组）。</li>
+<li>容易自定义/扩展。</li>
+</ol>
+<p>所以，Volley特别适合数据量小，通信频繁的网络应用开发,由于Volley会将Response解析到内存中，所以不适合大数据下载。</p>
+<a id="more"></a>
+<h2 id="总体设计"><a href="#总体设计" class="headerlink" title="总体设计"></a>总体设计</h2><h3 id="总体设计图"><a href="#总体设计图" class="headerlink" title="总体设计图"></a>总体设计图</h3><p><img src="/images/volley/design.png" alt="设计图"></p>
+<p>Volley主要是通过两种<code>Dispatch Thread</code>不断从<code>Request Queue</code>中取出请求，根据是否已缓存调用<code>Cache</code>或<code>Network</code>这两个类的数据获取接口，从内存缓存或是服务器取得请求的数据，然后交由<code>ResponseDelivery</code>去做结果分发及回调处理。</p>
+<h3 id="Volley中关键类介绍"><a href="#Volley中关键类介绍" class="headerlink" title="Volley中关键类介绍"></a>Volley中关键类介绍</h3><p>Volley的调用比较简单，通过newRequestQueue(…)函数新建并启动一个请求队列<code>RequestQueue</code>后，只需要往这个<code>RequestQueue</code>不断add Request即可。</p>
+<p><strong>Volley</strong>:volley对外暴露的API，通过newRequestQueue(…)函数新建并启动一个请求队列<code>RequestQueue</code>。</p>
+<p><strong>Request</strong>:表示一个请求的抽象类。<code>StringRequest</code>,<code>JsonRequest</code>,<code>ImageRequest</code>都是它的子类，表示某种类型的请求。</p>
+<p><strong>RequestQueue</strong>:表示请求队列，里面包含一个<code>CacheDispatcher</code>(用于处理走缓存请求的调度线程)、<code>NetworkDispatcher</code>数组(用于处理走网络请求的调度线程)，一个<code>ResponseDelivery</code>(返回结果分发接口),通过start()函数启动时会启动<code>NetworkDispatcher</code>，<code>CacheDispatcher</code>。</p>
+<p><strong>CacheDispatcher</strong>:一个线程，用于调度处理走缓存的请求。启动后会不断从缓存请求队列中取请求处理，队列为空则等待，请求处理结束则将结果传递给<code>ResponseDelivery</code>去执行后续处理。当结果未缓存过，缓存失效或缓存需要刷新的情况下，该请求都需要重新进入<code>NetworkDispatcher</code>去调度请求。</p>
+<p><strong>NetworkDispatcher</strong>:一个线程，用于调度处理走网络的请求。启动后不断从网络请求队列中取请求处理，队列为空则等待，请求处理结束则将结果传递给<code>ResponseDelivery</code>去执行后续处理，并判断结果是否要进行缓存。</p>
+<p><strong>ResponseDelivery</strong>:返回结果分发，目前只有基于<code>ExecutorDelivery</code>的，在入参handler对应线程内进行分发。</p>
+<p><strong>BaseHttpStack</strong>:处理Http请求，返回请求结果。目前Volley中有基于HttpUrlConnection的<code>HurlStack</code>和基于Apache HttpClient的<code>HttpClientStack</code>。由于目前不需要考虑API&lt;9的情况，故<code>HttpClientStack</code>不需要考虑。<code>HttpClientStack</code>通过<code>AdaptedHttpStack</code>转换为<code>BaseHttpStack</code>。</p>
+<p><strong>Network</strong>:调用<code>HttpStack</code>处理请求，并将结果转换为可被<code>ResponseDelivery</code>处理的<code>NetworkResponse</code>。</p>
+<p><strong>Cache</strong>:缓存请求结果，Volley默认使用的是基于Cache目录的<code>DiskBasedCache</code>。<code>NetworkDispatcher</code>得到请求结果后判断是否需要存储在Cache，<code>CacheDispatcher</code>会从Cache中取缓存结果。</p>
+<h2 id="请求流程图"><a href="#请求流程图" class="headerlink" title="请求流程图"></a>请求流程图</h2><p><img src="/images/volley/Volley-run-flow-chart.png" alt="请求流程图"></p>
+<h2 id="详细设计"><a href="#详细设计" class="headerlink" title="详细设计"></a>详细设计</h2><h3 id="类关系图"><a href="#类关系图" class="headerlink" title="类关系图"></a>类关系图</h3><p><img src="/images/volley/volley-class.png" alt="类关系图"></p>
+<blockquote>
+<p>图中<strong>红色圈内</strong>的部分，组成Volley框架的核心，围绕RequestQueue类，将各个功能点以组合的方式结合在了一起。各个功能点也都是以接口或者<strong>抽象类</strong>的形式提供。<br>红色圈外面的部分，在Volley源码中放在了toolbox包中，作为Volley为各个功能点提供的默认的具体实现。<br>通过类图我们看出，Volley有着非常好的拓展性。通过各个功能点的接口，我们可以给出自定义的，更符合我们需求的具体实现。</p>
+</blockquote>
+<blockquote>
+<p><strong>多用组合，少用继承；针对接口编程，不针对具体实现编程</strong></p>
+</blockquote>
+<h3 id="核心类功能介绍"><a href="#核心类功能介绍" class="headerlink" title="核心类功能介绍"></a>核心类功能介绍</h3><h4 id="Volley-java"><a href="#Volley-java" class="headerlink" title="Volley.java"></a>Volley.java</h4><p>这个和Volley框架同名的类，其实是个工具类，作用是构建一个可用于添加网络请求的RequestQueue对象。</p>
+<p>Volley.java有两个重载的静态方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestQueue <span class="title">newRequestQueue</span><span class="params">(Context context)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestQueue <span class="title">newRequestQueue</span><span class="params">(Context context, BaseHttpStack stack)</span></span></span><br></pre></td></tr></table></figure>
+<p>第一个方法的实现调用了第二个方法，通过BaseHttpStack创建一个代表网络(Network)的具体实现<code>BaseNetwork</code>，接着构造一个代表缓存(Cache)的基于Disk的具体实现<code>DiskBasedCache</code>。最后将网络(Network)对象和缓存(Cache)对象传入构建一个<code>RequestQueue</code>，启动这个RequestQueue，并返回。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">File cacheDir = <span class="keyword">new</span> File(context.getCacheDir(),DEFAULT_CACHE_DIR);</span><br><span class="line">RequestQueue queue = <span class="keyword">new</span> RequestQueue(<span class="keyword">new</span> DiskBasedCache(cacheDir), network);</span><br><span class="line">queue.start();</span><br><span class="line"><span class="keyword">return</span> queue;</span><br></pre></td></tr></table></figure>
+<p>我们平时大多采用<code>Volley.newRequestQueue(context)</code>的默认实现，构建RequestQueue。通过源码可以看出，我们可以抛开Volley工具类构建自定义的RequestQueue，采用自定义的<code>BaseHttpStack</code>，采用自定义的<code>Network</code>实现，采用自定义的Cache实现等来构建<code>RequestQueue</code>。<strong>优秀框架的高可拓展性的魅力来源于此啊</strong></p>
+<h4 id="Request-java"><a href="#Request-java" class="headerlink" title="Request.java"></a>Request.java</h4><p>代表一个网络请求的抽象类。我们通过构建一个<code>Request</code>类的非抽象子类(<code>StringRequest</code>,<code>JsonRequest</code>,<code>ImageRequest</code>或自定义)对象，并将其加入到<code>RequestQueue</code>中来完成一次网络请求操作。Volley支持8种Http请求方式<strong>GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH</strong>。Request类中包含了请求url,请求方式，请求Header，请求Body，请求的优先级等信息。</p>
+<p><strong>因为是抽象类，子类必须重写的两个方法。</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">protected</span> Response&lt;T&gt; <span class="title">parseNetworkResponse</span><span class="params">(NetworkResponse response)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>子类重写此方法，将网络返回的原生字节内容，转换成合适的类型。此方法会在<strong>工作线程</strong>中被调用。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">deliverResponse</span><span class="params">(T response)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>子类重写此方法，将解析成合适类型的内容传递给他们的监听回调。</p>
+<p><strong>以下两个方法也经常会被重写</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] getBody()</span><br></pre></td></tr></table></figure>
+<p>重写此方法，可以构建用于<strong>POST, PUT, PATCH</strong>请求方式的Body内容。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Map&lt;String, String&gt; <span class="title">getParams</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></p>
+<p>在上面<code>getBody</code>函数没有被重写情况下，此方法的返回值会被key，value分别编码后拼接起来转换为字节码作为Body内容。</p>
+<h4 id="RequestQueue-java"><a href="#RequestQueue-java" class="headerlink" title="RequestQueue.java"></a>RequestQueue.java</h4><p>Volley框架的核心类，将请求Request加入到一个运行的<code>RequestQueue</code>中，来完成请求操作。</p>
+<ul>
+<li>主要成员变量</li>
+</ul>
+<p>RequestQueue中维护了两个<strong>基于优先级</strong>的Request队列，缓存请求队列和网络请求队列。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt; mCacheQueue = <span class="keyword">new</span> PriorityBlockingQueue&lt;&gt;();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&lt;?&gt;&gt; mNetworkQueue = <span class="keyword">new</span> PriorityBlockingQueue&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>维护了一个正在进行中，尚未完成的请求集合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Request&lt;?&gt;&gt; mCurrentRequests = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动队列</li>
+</ul>
+<p>创建出RequestQueue以后，调用start()方法，启动队列。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Starts the dispatchers in this queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    stop(); <span class="comment">// Make sure any currently running dispatchers are stopped.</span></span><br><span class="line">    <span class="comment">// Create the cache dispatcher and start it.</span></span><br><span class="line">    mCacheDispatcher = <span class="keyword">new</span> CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);</span><br><span class="line">    mCacheDispatcher.start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create network dispatchers (and corresponding threads) up to the pool size.</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mDispatchers.length; i++) &#123;</span><br><span class="line">        NetworkDispatcher networkDispatcher =</span><br><span class="line">                <span class="keyword">new</span> NetworkDispatcher(mNetworkQueue, mNetwork, mCache, mDelivery);</span><br><span class="line">        mDispatchers[i] = networkDispatcher;</span><br><span class="line">        networkDispatcher.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>start()方法中，开启一个<strong>缓存调度线程<code>CacheDispatcher</code></strong> 和4个 <strong>网络调度线程<code>NetworkDispatcher</code></strong>。<br>缓存调度线程不断的从缓存请求队列中取出Request去处理，网络调度线程不断的从网络请求队列中取出Rqeust去处理。</p>
+<ul>
+<li>处理流程图</li>
+</ul>
+<p><img src="/images/volley/request_queue.png" alt="RequestQueue流程图"></p>
+<h4 id="CacheDispatcher-java"><a href="#CacheDispatcher-java" class="headerlink" title="CacheDispatcher.java"></a>CacheDispatcher.java</h4><p>一个线程，用于调度处理走缓存的请求。启动后会不断从缓存请求队列中取请求处理，队列为空则等待，请求处理结束则将结果传递给<code>ResponseDelivery</code>去执行后续处理。当结果未缓存过、缓存失效或缓存需要刷新的情况下，该请求都需要重新进入<code>NetworkDispatcher</code>去调度处理。</p>
+<ul>
+<li>主要成员变量</li>
+</ul>
+<p><code>BlockingQueue&lt;Request&lt;?&gt;&gt; mCacheQueue;</code>缓存请求队列</p>
+<p><code>BlockingQueue&lt;Request&lt;?&gt;&gt; mNetworkQueue;</code>网络请求队列</p>
+<p><code>Cache mCache;</code>缓存类，代表了一个可以获取请求结果，存储请求结果的缓存</p>
+<p><code>ResponseDelivery mDelivery;</code>请求结果传递类</p>
+<p><code>WaitingRequestManager mWaitingRequestManager</code></p>
+<ul>
+<li>处理流程图</li>
+</ul>
+<p><img src="/images/volley/cache_dispatcher.png" alt="CacheDispatcher流程图"></p>
+<h4 id="NetworkDispatcher-java"><a href="#NetworkDispatcher-java" class="headerlink" title="NetworkDispatcher.java"></a>NetworkDispatcher.java</h4><p>一个线程，用于调度处理走网络的请求。启动后会不断从网络请求队列中请求处理，队列为空则等待，请求处理结束则将结果传递给<code>RespondeDelivery</code>去执行后续处理。并判断结果是否要进行缓存。</p>
+<ul>
+<li>主要成员变量</li>
+</ul>
+<p><code>BlockingQueue&lt;Request&lt;?&gt;&gt; mQueue</code> 网络请求队列</p>
+<p><code>Network mNetwork</code> 网络类，代表了一个可以执行请求的网络</p>
+<p><code>Cache mCache</code> 缓存类，代表了一个可以获取请求结果，存储请求结果的缓存</p>
+<p><code>ResponseDelivery mDelivery</code> 请求结果传递类，可以传递请求的结果或者错误到调用者</p>
+<ul>
+<li>处理流程</li>
+</ul>
+<p><img src="/images/volley/NetworkDispatcher-run-flow-chart.png" alt="NetworkDispatcher流程图"></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+        
+            <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢您的阅读-------------</div>
+    
+</div>
+
+        
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/423abe9e/" rel="next" title="git常用命令">
+                <i class="fa fa-chevron-left"></i> git常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/142beca2/" rel="prev" title="hashCode方法和equals方法">
+                hashCode方法和equals方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+             <a href="/" class="site-author-image" rel="start" style="border:none">
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="51lucky">
+             </a>
+            
+              <p class="site-author-name" itemprop="name">51lucky</p>
+              <p class="site-description motion-element" itemprop="description">淡定的人生不寂寞</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/51lucky" target="_blank" title="GitHub" rel="external nofollow noopener noreferrer">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:olsonaolson@gmail.com" target="_blank" title="E-Mail" rel="external nofollow noopener noreferrer">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Volley-简介"><span class="nav-number">1.</span> <span class="nav-text">Volley 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总体设计"><span class="nav-number">2.</span> <span class="nav-text">总体设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总体设计图"><span class="nav-number">2.1.</span> <span class="nav-text">总体设计图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volley中关键类介绍"><span class="nav-number">2.2.</span> <span class="nav-text">Volley中关键类介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求流程图"><span class="nav-number">3.</span> <span class="nav-text">请求流程图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详细设计"><span class="nav-number">4.</span> <span class="nav-text">详细设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类关系图"><span class="nav-number">4.1.</span> <span class="nav-text">类关系图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心类功能介绍"><span class="nav-number">4.2.</span> <span class="nav-text">核心类功能介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Volley-java"><span class="nav-number">4.2.1.</span> <span class="nav-text">Volley.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Request-java"><span class="nav-number">4.2.2.</span> <span class="nav-text">Request.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RequestQueue-java"><span class="nav-number">4.2.3.</span> <span class="nav-text">RequestQueue.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CacheDispatcher-java"><span class="nav-number">4.2.4.</span> <span class="nav-text">CacheDispatcher.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NetworkDispatcher-java"><span class="nav-number">4.2.5.</span> <span class="nav-text">NetworkDispatcher.java</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">51lucky</span>
+
+  
+</div>
+
+<div>
+<a href="http://www.miitbeian.gov.cn/" rel="external nofollow noopener noreferrer" target="_blank">豫ICP备18000499号-1</a>
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io" rel="external nofollow noopener noreferrer">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next" rel="external nofollow noopener noreferrer">NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cytoTyLKy';
+      var conf = '691dcb3942e1fc9c7979ebf2b6c45e22';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</body>
+</html>
